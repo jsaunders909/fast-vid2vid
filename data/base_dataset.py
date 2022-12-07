@@ -204,6 +204,11 @@ def get_video_params(opt, n_frames_total, cur_seq_len, index):
 def concat_frame(A, Ai, nF):
     if A is None:
         A = Ai
+    elif isinstance(Ai, np.ndarray):
+        c = Ai.shape[0]
+        if A.shape[0] == nF * c:
+            A = A[c:]
+        A = np.concatenate([A, Ai])
     else:
         c = Ai.size()[0]
         if A.size()[0] == nF * c:

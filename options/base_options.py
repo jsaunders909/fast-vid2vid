@@ -9,11 +9,12 @@ class BaseOptions():
         self.initialized = False
 
     def initialize(self):                
-        self.parser.add_argument('--dataroot', type=str, default='datasets/Cityscapes/')        
+        self.parser.add_argument('--dataroot', type=str,
+                                 default='C:/Users/jacks/Documents/Data/EmotionalHeadAvatars/W011')
         self.parser.add_argument('--batchSize', type=int, default=1, help='input batch size')
         self.parser.add_argument('--loadSize', type=int, default=512, help='scale images to this size')
         self.parser.add_argument('--fineSize', type=int, default=512, help='then crop to this size')
-        self.parser.add_argument('--input_nc', type=int, default=3, help='# of input image channels')
+        self.parser.add_argument('--input_nc', type=int, default=2, help='# of input image channels')
         self.parser.add_argument('--label_nc', type=int, default=0, help='number of labels')        
         self.parser.add_argument('--output_nc', type=int, default=3, help='# of output image channels')        
 
@@ -31,7 +32,7 @@ class BaseOptions():
         self.parser.add_argument('--model', type=str, default='vid2vid', help='chooses which model to use. vid2vid, test')        
         self.parser.add_argument('--nThreads', default=1, type=int, help='# threads for loading data')
         self.parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
-        self.parser.add_argument('--norm', type=str, default='batch', help='instance normalization or batch normalization')
+        self.parser.add_argument('--norm', type=str, default='instance', help='instance normalization or batch normalization')
         self.parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
         self.parser.add_argument('--display_winsize', type=int, default=512,  help='display window size')
         self.parser.add_argument('--display_id', type=int, default=0, help='window id of the web display')        

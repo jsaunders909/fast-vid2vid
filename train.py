@@ -93,9 +93,9 @@ def train():
                 fake_B_prev = modelG.module.compute_fake_B_prev(real_B_prev, fake_B_prev_last, fake_B)
                 fake_B_prev_last = fake_B_last
 
-                losses =  modelD(0, reshape([real_B, fake_B[-1], fake_B_raw[-1], real_A, real_B_prev, fake_B_prev, flow, weight, flow_ref, conf_ref]))
+                losses = modelD(0, reshape([real_B, fake_B[-1:], fake_B_raw[-1:], real_A, real_B_prev, fake_B_prev, flow, weight, flow_ref, conf_ref]))
                 for i_fb in range(len(fake_B)-1):
-                    losses_tmp = modelD(0, reshape([real_B, fake_B[i_fb], fake_B_raw[i_fb], real_A, real_B_prev, fake_B_prev, flow, weight, flow_ref, conf_ref]))
+                    losses_tmp = modelD(0, reshape([real_B, fake_B[i_fb][None], fake_B_raw[i_fb][None], real_A, real_B_prev, fake_B_prev, flow, weight, flow_ref, conf_ref]))
                     for i_loss in range(len(losses_tmp)):
                         if losses_tmp[i_loss] is not None:
                             losses[i_loss] += losses_tmp[i_loss]
@@ -104,14 +104,14 @@ def train():
 
 
                 frames_all, frames_skipped = modelD.module.get_all_skipped_frames(frames_all, \
-                        real_B, fake_B[-1], flow_ref, conf_ref, t_scales, tD, n_frames_load, i, flowNet)      
+                        real_B, fake_B[-1:], flow_ref, conf_ref, t_scales, tD, n_frames_load, i, flowNet)
 
                 # run discriminator for each temporal scale
                 loss_dict_T = []
                 for s in range(t_scales):                
                     if frames_skipped[0][s] is not None:                        
                         losses = modelD(s+1, [frame_skipped[s] for frame_skipped in frames_skipped])
-                        losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
+                        losses = [torch.mean(x) if not isinstance(x, int) else x for x in losses ]
                         loss_dict_T.append(dict(zip(modelD.module.loss_names_T, losses)))
 
                 # collect losses
@@ -133,8 +133,6 @@ def train():
                 if i == 0: 
                     fake_B_first = fake_B[0, 0]   # the first generated image in this sequence
                 visuals = util.save_all_tensors(opt, real_A, fake_B[-1], fake_B_first, fake_B_raw[-1], real_B, flow_ref, conf_ref, flow, weight, modelD)  
-                
-                
 
             if opt.debug:
                 call(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"]) 
